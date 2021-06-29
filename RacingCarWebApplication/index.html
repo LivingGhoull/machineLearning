@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html>
 <head>
-   
 </head>
 <body onload="startAll()">
     <br />
@@ -42,19 +41,19 @@
         var population = [];
         var newChro = [];
         var fTime = 0;
+        var chroNr = 0;
 
-        function startAll() {
-            document.body.addEventListener('keydown', doKeyDown);   
-            for (let index = 0; index < 2; index++) {
-                for (let i = 0; i < 6; i++) {
-                var o = Math.floor(Math.random() * 10) +1;
+        function startAll() {  
+            for (let index = 0; index < 10; index++) {
+                for (let i = 0; i < 3; i++) {
+                var o = (Math.random() * (Math.round(Math.random()) ? 1 : -1) * 11);
+                console.log()
                 newChro[i] = o;
                 }
                 population[index] = newChro;
                 newChro = [];
             }        
-            console.log(population[1])
-            //hentBilledeAfBanen();
+            hentBilledeAfBanen();
         }
 
         function hentBilledeAfBanen() {            
@@ -65,31 +64,22 @@
                 drawEveryThing();
             }
         }
-
         function Timer() {
             forward();
             drawEveryThing();
             machineLearning();
             speeding();
             timeCount++;
-         }
-
-        function machineLearning() {
-            if(distantRight > distantFront){
-                rotateCar(distantRight*newChro[1] + distantRight*newChro[3] +distantRight* newChro[5]);
-            }
-            else if(distantLeft > distantFront){
-                rotateCar(distantRight*newChro[2] + distantRight*newChro[4] +distantRight* newChro[6]);
-            }
         }
-
+        function machineLearning() {
+            var turn = Math.tanh((distantFront * population[chroNr][0]) + (distantRight * population[chroNr][1]) + (distantLeft * population[chroNr][2]));
+            rotateCar(turn);
+        }
         function speeding(){
             if(timeCount % 100 == 0){
                 speed += defaultSpeedIncriment
             }
-
         }
-
         function newGame() {
             center = { x: 130, y: 65 };
             timeCount = 0;
@@ -103,24 +93,6 @@
         }
         function SpeedDown() {
             speed -= defaultSpeedIncriment ;           
-        }
-        function doKeyDown(e) {
-            if (e.keyCode == 87) //W = forward
-            {
-                SpeedUp();
-            }
-            if (e.keyCode == 83) //S = backward
-            {
-                SpeedDown();
-            }
-            if (e.keyCode == 65) //A = left
-            {
-                rotateCar(-defaultRotatValue);
-            }
-            if (e.keyCode == 68) //D = right
-            {
-                rotateCar(defaultRotatValue);
-            }
         }
         function forward() {
             var nyPos = lineToAngle(ctx, center.x, center.y, speed, angle);
@@ -329,21 +301,13 @@
             var alpha = imgData.data[3];
             if (green + red + blue < 600) {
                 aktuelColor = "red";
-
-                population[myTimer] = newChro;
-
                 clearInterval(myTimer);
 
-                if(timeCount > fTime)
-                    fTime = timeCount;
-
-                newChro = []
-                
-                for (let i = 0; i < 10; i++) {
-                var o = Math.floor(Math.random() * 10) +1;
-                newChro[i] = o;
+                if(timeCount > fTime){
+                    population[chroNr][3] = timeCount;
                 }
-                population.forEach(element => console.log(element));
+
+                chroNr++;
                 newGame();
             }
             else {
