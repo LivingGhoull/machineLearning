@@ -43,10 +43,11 @@
         var fTime = 0;
         var chroNr = 0;
 
+        // When the website is first loading 
         function startAll() {  
             for (let index = 0; index < 10; index++) {
                 for (let i = 0; i < 3; i++) {
-                var o = (Math.random() * (Math.round(Math.random()) ? 1 : -1) * 10);
+                var o = Math.random() * (Math.round(Math.random()) ? 1 : -1) * 10;
                 newChro[i] = o;
                 }
                 population[index] = newChro;
@@ -306,6 +307,13 @@
                     population[chroNr][3] = timeCount;
                 }
 
+                if(chroNr == 10){
+                    var array = [[123, 3], [745, 4], [643, 5], [643, 2]];
+                    array.sort(([a, b], [c, d]) => c - a || b - d);
+                    console.log(array)
+                    
+                    //chroNr = 0;
+                }
                 chroNr++;
                 newGame();
             }
