@@ -42,11 +42,11 @@
         var newChro = [];
         var fTime = 0;
         var gen = 0;
-        var chroNr = 0;
+        var turn = 0;
         var rng = 0;
 
         class Chromosones{
-            constructor(chro, fitness){
+            constructor(chro, fit){
                 this.chro = chro;
                 this.fit = fit;
             }
@@ -59,10 +59,11 @@
                 var o = Math.random() * (Math.round(Math.random()) ? 1 : -1) * 10;
                 newChro[i] = o;
                 }
-                var gay = new chr
-                population[index] = newChro;
+                var chromosone = new Chromosones(newChro, 0)
+                population[index] = chromosone;
                 newChro = [];
-            }        
+            } 
+            
             hentBilledeAfBanen();
         }
 
@@ -82,8 +83,8 @@
             timeCount++;
         }
         function machineLearning() {
-            var turn = Math.tanh((distantFront * population[chroNr][0]) + (distantRight * population[chroNr][1]) + (distantLeft * population[chroNr][2]));
-            rotateCar(turn);
+            var drift = Math.tanh((distantFront * population[turn].chro[0]) + (distantRight * population[turn].chro[1]) + (distantLeft * population[turn].chro[2]));
+            rotateCar(drift * speed);
         }
         function speeding(){
             if(timeCount % 100 == 0){
@@ -291,7 +292,7 @@
             ctx.font = "15px Arial";
             var xpos = 350;
             ctx.fillText("Gen = "+ gen, xpos, 20);
-            ctx.fillText("Turn = "+chroNr, xpos, 40);
+            ctx.fillText("Turn = "+turn, xpos, 40);
             distantFront = dist(distFarward.x, distFarward.y, justInFront.x, justInFront.y);
             distantLeft = dist(distLeft.x, distLeft.y, justInFront.x, justInFront.y);
             distantRight = dist(distRight.x, distRight.y, justInFront.x, justInFront.y);
@@ -312,34 +313,30 @@
             if (green + red + blue < 600) {
                 aktuelColor = "red";
                 clearInterval(myTimer);
-
-                if(timeCount > population[chroNr][3]){
-                    console.log(population[chroNr][3]);
-                    population[chroNr][3] = timeCount;
-                }
                 
-                if(chroNr == 9){
-                    population.sort(function(a, b) {
-                    return b[3] - a[3];
-                    });
+                population[turn].fit = timeCount;
 
+                if(turn == 9){
+                    population.sort(function(a, b) {
+                    return b.fit - a.fit;
+                    });
+                    
                     rng = Math.floor(Math.random() * 3);
                     var arr = population;
                     for (let i = 0; i < 6; i+2) {
-                        console.log(i)
-                        arr[i++][rng] = population[i][rng];
-                        population[i][rng] = arr[i++][rng];
+                        arr[i++].chro[rng] = population[i].chro[rng];
+                        population[i].chro[rng] = arr[i++].chro[rng];
                     }
                     
                     for (let i = 6; i < 10; i++) {
-                        rng = Math.floor(Math.random() * 3) + 1;
-                        population[i][rng] = Math.random() * (Math.round(Math.random()) ? 1 : -1) * 10;
+                        rng = Math.floor(Math.random() * 3);
+                        population[i].chro[rng] = Math.random() * (Math.round(Math.random()) ? 1 : -1) * 10;
                     }
-                    
-                    chroNr = 0;
+                    console.log(population);
+                    turn = -1;
                     gen++;
                 }
-                chroNr++;
+                turn++;
                 newGame();
             }
             else {
